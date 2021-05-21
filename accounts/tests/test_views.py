@@ -2,8 +2,8 @@ import json
 from rest_framework import status
 from django.test import TestCase, Client
 from django.urls import reverse
-from ..models import Account
-from ..serializers import AccountSerializer
+from accounts.models import Account, create_account
+from accounts.serializers import AccountSerializer
 
 
 # initialize the APIClient app
@@ -14,10 +14,10 @@ class GetAllAccountsTest(TestCase):
     """ Test module for GET all accounts API """
 
     def setUp(self):
-        Account.objects.create(name='Casper', balance=1000.0)
-        Account.objects.create(name='Basil', balance=650.25)
-        Account.objects.create(name='Watson', balance=700.0)
-        Account.objects.create(name='James', balance=250.0)
+        create_account(name='Casper', balance=1000.0)
+        create_account(name='Basil', balance=650.25)
+        create_account(name='Watson', balance=700.0)
+        create_account(name='James', balance=250.0)
 
     def test_get_all_accounts(self):
         # get API response
@@ -33,10 +33,10 @@ class GetSingleAccountTest(TestCase):
     """ Test module for GET single Account API """
 
     def setUp(self):
-        self.casper = Account.objects.create(name='Casper', balance=1000.0)
-        Account.objects.create(name='Basil', balance=650.25)
-        Account.objects.create(name='Watson', balance=700.0)
-        Account.objects.create(name='James', balance=250.0)
+        self.casper = create_account(name='Casper', balance=1000.0)
+        create_account(name='Basil', balance=650.25)
+        create_account(name='Watson', balance=700.0)
+        create_account(name='James', balance=250.0)
 
     def test_get_valid_single_account(self):
         response = client.get(
@@ -86,8 +86,8 @@ class UpdateSingleAccountTest(TestCase):
     """ Test module for updating an existing account record """
 
     def setUp(self):
-        self.casper = Account.objects.create(name='Casper', balance=1000.0)
-        self.basil = Account.objects.create(name='Basil', balance=650.25)
+        self.casper = create_account(name='Casper', balance=1000.0)
+        self.basil = create_account(name='Basil', balance=650.25)
         self.valid_payload = {
             'name': 'Casper',
             'balance': 200.0
@@ -117,8 +117,8 @@ class DeleteSingleAccountTest(TestCase):
     """ Test module for deleting an existing account record """
 
     def setUp(self):
-        self.casper = Account.objects.create(name='Casper', balance=1000.0)
-        self.basil = Account.objects.create(name='Basil', balance=650.25)
+        self.casper = create_account(name='Casper', balance=1000.0)
+        self.basil = create_account(name='Basil', balance=650.25)
 
     def test_valid_delete_account(self):
         response = client.delete(
@@ -135,10 +135,10 @@ class TransferTest(TestCase):
     """ Test module for transfer balance between accounts"""
 
     def setUp(self):
-        self.casper = Account.objects.create(name='Casper', balance=1000.0)
-        self.basil = Account.objects.create(name='Basil', balance=650.25)
+        self.casper = create_account(name='Casper', balance=1000.0)
+        self.basil = create_account(name='Basil', balance=650.25)
 
-    def test_valid_delete_account(self):
+    def test_transfer(self):
         response = client.get(
             reverse('get_transfer', kwargs={'from_account': self.casper.pk, 'to_account': self.basil.pk, 'amount': '10000'}))
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
