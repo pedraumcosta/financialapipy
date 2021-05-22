@@ -1,9 +1,13 @@
-from accounts.models import Account, create_account_dict
+from accounts.models import Account
 from accounts.serializers import AccountSerializer
 from django.db import transaction
 
 
 class AccountNotFoundError(Exception):
+    pass
+
+
+class BusinessException(Exception):
     pass
 
 
@@ -18,31 +22,36 @@ class TransferBalance:
         self.amount = amount
 
     def execute(self):
-        # validations
         try:
             from_account = Account.objects.find(self.from_account_id)
             to_account = Account.objects.find(self.to_account_id)
         except Account.DoesNotExist:
             raise AccountNotFoundError('Account not found')
 
-        with transaction.atomic():
-            from_account.set_balance(
-                from_account.get_balance() - int(self.amount)/100
-            )
+        if from_account.get_balance() - int(self.amount)/100 > 0:
+            with transaction.atomic():
+                from_account.set_balance(
+                    from_account.get_balance() - int(self.amount)/100
+                )
 
-            to_account.set_balance(
-                to_account.get_balance() + int(self.amount)/100
-            )
+                to_account.set_balance(
+                    to_account.get_balance() + int(self.amount)/100
+                )
 
-            self.persist(from_account)
+                self.persist(from_account)
 
-            self.persist(to_account)
+                self.persist(to_account)
 
-            return True
+                return True
+        else:
+            raise BusinessException("Not enough funds on source account")
         return False
 
     def persist(self, account):
-        data = create_account_dict(account.get_name(), account.get_balance())
+        data = {
+            'name': account.get_name(),
+            'balance': account.get_balance()
+        }
         serializer = AccountSerializer(account, data=data)
         if serializer.is_valid():
             serializer.save()

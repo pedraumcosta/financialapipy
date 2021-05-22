@@ -64,6 +64,10 @@ class CreateNewAccountTest(TestCase):
             'name': '',
             'balance': 600.0
         }
+        self.invalid_balance = {
+            'name': 'John',
+            'balance': -600.0
+        }
 
     def test_create_valid_account(self):
         response = client.post(
@@ -77,6 +81,14 @@ class CreateNewAccountTest(TestCase):
         response = client.post(
             reverse('get_post_accounts'),
             data=json.dumps(self.invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_account_with_negative_balance(self):
+        response = client.post(
+            reverse('get_post_accounts'),
+            data=json.dumps(self.invalid_balance),
             content_type='application/json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -150,4 +162,5 @@ class TransferTest(TestCase):
 
         response = client.get(
             reverse('get_delete_update_account', kwargs={'pk': self.basil.pk}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(750.25, response.data['balance'])
