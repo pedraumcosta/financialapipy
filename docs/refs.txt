@@ -1,0 +1,12 @@
+https://medium.com/@singhgautam7/django-signals-master-pre-save-and-post-save-422889b2839
+https://medium.com/@jairvercosa/manger-vs-query-sets-in-django-e9af7ed744e0
+https://realpython.com/test-driven-development-of-a-django-restful-api/
+https://github.com/phalt/django-api-domains/
+https://github.com/wq/django-rest-pandas
+https://stackoverflow.com/questions/57855228/django-post-pandas-dataframe-using-api-and-pickle-or-how-to-hello-world-seri
+https://realpython.com/get-started-with-django-1/
+https://semaphoreci.com/community/tutorials/dockerizing-a-python-django-web-application
+https://realpython.com/django-development-with-docker-compose-and-machine/
+https://github.com/realpython/dockerizing-django
+https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+https://pythontic.com/pandas/serialization/mysql
